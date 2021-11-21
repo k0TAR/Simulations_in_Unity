@@ -21,19 +21,19 @@ Material:
     m_TexEnvs:
     - _MainTex:
         m_Texture: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
-        m_Scale: {x: 5, y: 5}
+        m_Scale: {x: 16, y: 16}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _CullMode: 2
     - _DROP_Y: 0
     - _DropY: 1
     - _ShadowIntensity: 0.39
-    - _WaveAmplitude1: 0.903
-    - _WaveAmplitude2: 0.095
-    - _WaveFreq1: 1.5
-    - _WaveFreq2: 4.1
-    - _WaveSpeed1: 4.6
-    - _WaveSpeed2: 9.3
+    - _WaveAmplitude1: 0.05
+    - _WaveAmplitude2: 0.009
+    - _WaveFreq1: 8.5
+    - _WaveFreq2: 25.3
+    - _WaveSpeed1: 9.8
+    - _WaveSpeed2: 15.4
     m_Colors:
     - _LightDirection: {r: 1, g: 3, b: 2, a: 0}
     - _TintColor: {r: 1, g: 1, b: 1, a: 1}
