@@ -2,8 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class PBD_ParticleString : MonoBehaviour
 {
+    [SerializeField, Range(2, 64)] int _n_gon_vertex_count = 2;
+    [SerializeField, Range(0.01f, 8)] float _radius = 1;
+    [SerializeField, Range(1, 100)] int _curve_accuracy = 10;
+
+    [Space(10)]
+
     [SerializeField] int n = 24; //質点の個数
     [SerializeField, Range(0, 1)] float k = 0.5f; // バネの硬さ(Stiffness)
     [SerializeField] float dt = 0.01f; // Delta Time
@@ -11,17 +20,23 @@ public class PBD_ParticleString : MonoBehaviour
     [SerializeField] float kDamping = 0.03f; // Velocity Dampingで使用する定数
     [SerializeField] Transform startPoint; // ヒモの開始点
     [SerializeField] Transform endPoint; // ヒモの終了点
-    ParticleSystem.Particle[] particles;
     Vector3[] x = null; // 質点の位置
     Vector3[] v = null; // 質点の速度
     Vector3[] p = null; // 質点の推定位置
     bool[] isFixed = null;
     float[] m = null; // 質量
     Constraint[] constraints; // 拘束
-    ParticleSystem particleSystem;
+
+
+    MeshFilter _mesh_filter;
+    MeshRenderer _mesh_renderer;
 
     void Awake()
     {
+        if (_mesh_filter == null) _mesh_filter = GetComponent<MeshFilter>();
+        if (_mesh_renderer == null) _mesh_renderer = GetComponent<MeshRenderer>();
+
+
         // n個の質点の初期化
         p = new Vector3[n]; // 推定位置
         x = new Vector3[n]; // 位置
@@ -57,24 +72,8 @@ public class PBD_ParticleString : MonoBehaviour
         isFixed[0] = true;
         isFixed[n - 1] = true;
 
-        // ParticleSystemの初期化
-        InitializeParticle();
     }
 
-    private void InitializeParticle()
-    {
-        particleSystem = GetComponent<ParticleSystem>();
-
-        var main = particleSystem.main;
-        main.maxParticles = n;
-
-        var emission = particleSystem.emission;
-        emission.SetBursts(new[] { new ParticleSystem.Burst(0f, n) });
-        particleSystem.Play();
-
-        particles = new ParticleSystem.Particle[n];
-        particleSystem.GetParticles(particles);
-    }
 
     void Update()
     {
@@ -113,8 +112,12 @@ public class PBD_ParticleString : MonoBehaviour
             v[c.j] += dp2 / dt;
         }
 
-        // パーティクルへ位置反映
-        particleSystem.SetParticles(particles, constraints.Length);
+        // 位置反映
+        Face face = new Face(_n_gon_vertex_count, _radius);
+        var mesh = FaceExtruder.SolidifyPoints(SplineInterpolation.ApplyCubicUBSFuncToVectors(x, _curve_accuracy), face);
+
+        _mesh_filter.mesh = mesh;
+
     }
 
     /// <summary>
