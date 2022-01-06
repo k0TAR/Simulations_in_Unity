@@ -5,13 +5,13 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
-public class PBD_ParticleString : MonoBehaviour
+public class PBD_Rod : MonoBehaviour
 {
     [SerializeField, Range(2, 64)] int _n_gon_vertex_count = 2;
     [SerializeField, Range(0.01f, 8)] float _radius = 1;
     [SerializeField, Range(1, 100)] int _curve_accuracy = 10;
 
-    [Space(10)]
+    [Space(20)]
 
     [SerializeField] int n = 24; //質点の個数
     [SerializeField, Range(0, 1)] float k = 0.5f; // バネの硬さ(Stiffness)
