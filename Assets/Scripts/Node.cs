@@ -7,20 +7,20 @@ using UnityEngine;
 /// </summary>
 public interface INode
 {
-    public float U
+    float U
     {
         get; set;
     }
-    public Vector3 X
+    Vector3 X
     {
         get; set;
     }
 
-    public INode C
+    INode C
     {
         get; set;
     }
-    public INode A
+    INode A
     {
         get; set;
     }
@@ -34,9 +34,6 @@ public class EoL : INode
 {
     private float _eulerian;
     private Vector3 _lagrangian;
-
-    private INode _prev;
-    private INode _next;
 
     public EoL(float u, Vector3 x, INode prev, INode next)
     {
@@ -57,16 +54,8 @@ public class EoL : INode
         set { _lagrangian = value; }
     }
 
-    public INode A
-    {
-        get { return _prev; }
-        set { _prev = value; }
-    }
-    public INode C
-    {
-        get { return _next; }
-        set { _next = value; }
-    }
+    public INode A { get; set; }
+    public INode C { get; set; }
 
 
     public static explicit operator EIL(EoL node)
@@ -90,10 +79,6 @@ public class EoL : INode
 public class EIL : INode
 {
     private float _eulerian;
-    //private Vector3 _lagrangian;
-
-    private INode _prev;
-    private INode _next;
 
     public EIL(float u, INode prev, INode next)
     {
@@ -113,24 +98,15 @@ public class EIL : INode
         get
         {
             return
-                (C.U - U) / (C.U - A.U) * A.X +
-                (U - A.U) / (C.U - A.U) * C.X;
+                ((C.U - U) * A.X + (U - A.U) * C.X) / (C.U - A.U);
         }
         set
         {
         }
     }
 
-    public INode A
-    {
-        get { return _prev; }
-        set { _prev = value; }
-    }
-    public INode C
-    {
-        get { return _next; }
-        set { _next = value; }
-    }
+    public INode A { get; set; }
+    public INode C { get; set; }
 
 
     public static explicit operator EoL(EIL node)
@@ -139,6 +115,6 @@ public class EIL : INode
         var x_bc_magnitude = Vector3.Distance(node.X, node.C.X);
         float u =
             (x_bc_magnitude * node.A.U + x_ab_magnitude * node.C.U) / (x_ab_magnitude + x_bc_magnitude);
-        return new EoL(u, node.X);
+        return new EoL(u, node.X, node.A, node.C);
     }
 }
