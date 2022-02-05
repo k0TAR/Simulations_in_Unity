@@ -5,7 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
-public class PBD_Rod : MonoBehaviour
+public class PbdRod : MonoBehaviour
 {
     [SerializeField, Range(2, 64)] int _n_gon_vertex_count = 2;
     [SerializeField, Range(0.01f, 8)] float _radius = 1;
