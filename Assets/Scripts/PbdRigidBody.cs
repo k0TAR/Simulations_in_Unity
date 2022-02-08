@@ -4,5 +4,5 @@ using UnityEngine;
 
 public sealed class PbdRigidBody : MonoBehaviour
 {
-
+    public Vector3 PrevPosition { get; set; }
 }

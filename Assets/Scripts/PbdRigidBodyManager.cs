@@ -24,26 +24,50 @@ public class PbdRigidBodyManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            foreach (var rigidbody in _rigidBodies)
+            {
+                rigidbody.transform.position += (Vector3)_random.NextFloat3Direction() * 0.1f;
+            }
+        }
+    }
+
     private void FixedUpdate()
     {
+        foreach (var rigidbody in _rigidBodies)
+        {
+            var position = rigidbody.transform.position;
+            var velocity = (position - rigidbody.PrevPosition) / Time.deltaTime;
+
+            velocity += Physics.gravity * Time.deltaTime;
+
+            rigidbody.PrevPosition = position;
+            position += velocity * Time.deltaTime;
+
+            rigidbody.transform.position = position;
+        }
+
         for (var i = 0; i < _rigidBodies.Count - 1; ++i)
         {
             for (var j = i; j < _rigidBodies.Count; ++j)
             {
-                var rigidBody1 = _rigidBodies[i];
-                var rigidBody2 = _rigidBodies[j];
-                if (rigidBody1 == rigidBody2)
+                var rigidBodyA = _rigidBodies[i];
+                var rigidBodyB = _rigidBodies[j];
+                if (rigidBodyA == rigidBodyB)
                 {
                     continue;
                 }
 
-                var a = rigidBody1.transform.position;
-                var b = rigidBody2.transform.position;
+                Vector3 a = rigidBodyA.transform.position;
+                Vector3 b = rigidBodyB.transform.position;
 
-                var ab = b - a;
+                Vector3 ab = b - a;
 
-                var abMagnitude = ab.magnitude;
-                var abDirection = ab.normalized;
+                float abMagnitude = ab.magnitude;
+                Vector3 abDirection = ab.normalized;
                 if (abDirection == Vector3.zero) abDirection = Vector3.up;
 
                 if (abMagnitude < 1)
@@ -55,8 +79,8 @@ public class PbdRigidBodyManager : MonoBehaviour
                 a = math.clamp(a, -2, 2);
                 b = math.clamp(b, -2, 2);
 
-                rigidBody1.transform.position = a;
-                rigidBody2.transform.position = b;
+                rigidBodyA.transform.position = a;
+                rigidBodyB.transform.position = b;
             }
         }
     }
